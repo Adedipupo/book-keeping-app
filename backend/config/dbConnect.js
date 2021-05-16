@@ -5,7 +5,7 @@ const dbConnect = () => {
   //connect to mongoose
   mongoose
     .connect(
-      "mongodb+srv://dipo123:12345@book-keeping-app.zmu4u.mongodb.net/book-keeping-app",
+      process.env.DB_URL,
       {
         useFindAndModify: true,
         useUnifiedTopology: true,

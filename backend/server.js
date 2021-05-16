@@ -1,10 +1,11 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 const error = require("./middleware/errorMiddlewareHandler");
-
-
-
 const userRoute = require("./routes/usersRoutes");
+
+
+dotenv.config()
+
 require("./config/dbConnect")();
 
 const app = express();
