@@ -44,6 +44,7 @@ userRoute.delete("/:id", (req, res) => {
   res.send("Delete route");
 });
 userRoute.get("/", (req, res) => {
+    console.log(req.headers)
   res.send("Fetch All route");
 });
 
