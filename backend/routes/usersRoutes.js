@@ -1,5 +1,6 @@
 const express = require("express");
 const asycHandler = require('express-async-handler');
+const authMiddleware = require("../middleware/authMiddleware");
 const User = require("../model/User");
 const generateToken = require("../utils/generateToken");
 
@@ -37,15 +38,34 @@ userRoute.post("/login", asycHandler(async(req, res) => {
         throw new Error('Invalid Credentials')
     }
 }));
-userRoute.put("/update", (req, res) => {
-  res.send("Update route");
-});
+userRoute.put("/update", asycHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if (user) {
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+
+        if (req.body.password) {
+            user.password = req.body.password || user.password;
+        }
+        const updatedUser = await user.save();
+
+        res.status(200).json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            password: updatedUser.password,
+            email: updatedUser.email,
+            token: generateToken(updatedUser._id)
+        })
+    } else {
+        res.status(401);
+        throw new Error('Invalid')
+    }
+}));
 userRoute.delete("/:id", (req, res) => {
   res.send("Delete route");
 });
-userRoute.get("/", (req, res) => {
-    console.log(req.headers)
-  res.send("Fetch All route");
+userRoute.get("/",authMiddleware, (req, res) => {
+  res.send(req.user);
 });
 
 module.exports = userRoute;

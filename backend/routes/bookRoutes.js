@@ -22,6 +22,23 @@ bookRouter.post('/', asycHandler(async (req, res) => {
 }))
 
 
+bookRouter.get(
+    "/",
+    asycHandler(async (req, res) => {
+        const book = await Book.find({});
+        
+        if (book) {
+            res.status(200).json({
+                book,
+      });
+    } else {
+      res.status(500);
+      throw new Error("There are no Books here");
+    }
+})
+);
+
+
 
 
 
