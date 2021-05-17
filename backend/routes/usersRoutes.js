@@ -38,7 +38,7 @@ userRoute.post("/login", asycHandler(async(req, res) => {
         throw new Error('Invalid Credentials')
     }
 }));
-userRoute.put("/update", asycHandler(async (req, res) => {
+userRoute.put("/update",authMiddleware, asycHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
     if (user) {
         user.name = req.body.name || user.name;
@@ -64,8 +64,17 @@ userRoute.put("/update", asycHandler(async (req, res) => {
 userRoute.delete("/:id", (req, res) => {
   res.send("Delete route");
 });
-userRoute.get("/",authMiddleware, (req, res) => {
-  res.send(req.user);
-});
+userRoute.get("/",authMiddleware, asycHandler(async(req, res) => {
+  const user = await User.find({});
+
+  if (user) {
+    res.status(200).json({
+      user,
+    });
+  } else {
+    res.status(500);
+    throw new Error("There are no USer here");
+  }
+}));
 
 module.exports = userRoute;
