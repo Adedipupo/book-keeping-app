@@ -22,6 +22,7 @@ userRoute.post("/register", asycHandler(async (req, res) => {
                 token: generateToken(userCreated._id),
               });
 }));
+
 userRoute.post("/login", asycHandler(async(req, res) => {
     const {email, password } = req.body;
     const user = await User.findOne({ email})
@@ -38,28 +39,26 @@ userRoute.post("/login", asycHandler(async(req, res) => {
         throw new Error('Invalid Credentials')
     }
 }));
-userRoute.put("/update",authMiddleware, asycHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
-    if (user) {
-        user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email;
 
-        if (req.body.password) {
-            user.password = req.body.password || user.password;
-        }
-        const updatedUser = await user.save();
+userRoute.put("/:id",authMiddleware, asycHandler(async (req, res) => {
+       const user = await User.findById(req.params.id);
 
-        res.status(200).json({
-            _id: updatedUser._id,
-            name: updatedUser.name,
-            password: updatedUser.password,
-            email: updatedUser.email,
-            token: generateToken(updatedUser._id)
-        })
-    } else {
-        res.status(401);
-        throw new Error('Invalid')
-    }
+       if (user) {
+         const updatedUser = await User.findByIdAndUpdate(
+           req.params.id,
+           req.body,
+           {
+             new: true,
+             runValidators: true,
+           }
+         );
+         res.status(200).json({
+           updatedUser,
+         });
+       } else {
+         res.status(500);
+         throw new Error("Update failed");
+       }
 }));
 userRoute.delete("/:id", (req, res) => {
   res.send("Delete route");

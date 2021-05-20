@@ -1,5 +1,6 @@
 const express = require("express");
 const asycHandler = require("express-async-handler");
+const authMiddleware = require("../middleware/authMiddleware");
 const Book = require("../model/Book");
 
 
@@ -38,7 +39,7 @@ bookRouter.get(
 })
 );
 
-bookRouter.put('/:id', asycHandler(async (req, res) => {
+bookRouter.put('/:id',authMiddleware, asycHandler(async (req, res) => {
     const book = await Book.findById(req.params.id);
 
     if (book) {
@@ -57,6 +58,10 @@ bookRouter.put('/:id', asycHandler(async (req, res) => {
     }
 }))
 
+bookRouter.delete('./:id', authMiddleware, asycHandler(async (req, res) => {
+    const book = await Book.findOne(req.params.id);
+     
+}))
 
 
 

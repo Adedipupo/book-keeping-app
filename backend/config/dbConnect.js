@@ -7,7 +7,7 @@ const dbConnect = () => {
     .connect(
       process.env.DB_URL,
       {
-        useFindAndModify: true,
+        useFindAndModify: false,
         useUnifiedTopology: true,
         useCreateIndex: true,
         useNewUrlParser: true,
