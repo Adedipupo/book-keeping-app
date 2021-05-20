@@ -30,7 +30,7 @@ bookRouter.get(
         
         if (book) {
             res.status(200).json({
-                book,
+                book
       });
     } else {
       res.status(500);
@@ -58,9 +58,15 @@ bookRouter.put('/:id',authMiddleware, asycHandler(async (req, res) => {
     }
 }))
 
-bookRouter.delete('./:id', authMiddleware, asycHandler(async (req, res) => {
-    const book = await Book.findOne(req.params.id);
-     
+bookRouter.delete('/:id', authMiddleware, asycHandler(async (req, res) => {
+    
+    try {
+        const book = await Book.findByIdAndDelete(req.params.id);
+        res.status(200).send(book)
+    } catch (error) {        
+        res.status(500);
+        throw new Error('Delete failed')
+    }     
 }))
 
 
